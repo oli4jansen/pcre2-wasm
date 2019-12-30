@@ -62,3 +62,8 @@ typings/
 
 dist
 build
+
+.DS_Store
+
+# for experiments
+tmp/
