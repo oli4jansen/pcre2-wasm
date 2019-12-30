@@ -36,11 +36,12 @@ describe(`PCRE`, function () {
   })
 
   describe(`instance property`, function () {
-    describe.skip(`exec()`, function () {
+    describe(`match()`, function () {
       let re
+      const subject = 'fe fi fo fum';
 
       beforeEach(function () {
-        re = new PCRE('foo')
+        re = new PCRE('(?<first_f>f)(?<the_rest>[a-z]+)')
       })
 
       afterEach(function () {
@@ -48,11 +49,26 @@ describe(`PCRE`, function () {
       })
 
       it(`should return null on no match`, function () {
-        assert.strictEqual(re.exec('bar'), null)
+        const matches = re.match('bar')
+        assert.strictEqual(matches, null)
       })
 
       it(`should return array with matching string on match`, function () {
-        assert.strictEqual(re.exec('fo')[0], 'fo')
+        const matches = re.match(subject);
+
+        assert.strictEqual(matches[0].match, 'fe');
+      })
+
+      it(`should return named groups`, () => {
+        const matches = re.match(subject);
+
+        assert('first_f' in matches);
+        assert('the_rest' in matches);
+      })
+
+      it(`should return numbered groups`, () => {
+        const matches = re.match(subject);
+        assert.strictEqual(matches.length, 3);
       })
     })
   })
