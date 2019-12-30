@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "pcre2.h": "c",
+        "map": "c",
+        "unordered_map": "c",
+        "*.tcc": "c",
+        "random": "c"
+    }
+}
