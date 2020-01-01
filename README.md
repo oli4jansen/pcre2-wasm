@@ -60,11 +60,11 @@ Creates a new PCRE instance, using `pcre2_compile()` to compile `pattern`,
 using `flags` as the compile options. You must call `.destroy()` on the
 returned instance when it is no longer needed to prevent memory leakage.
 
-  - `pattern`: A string containing a Perl compatible regular expression.
-    Tip: use `String.raw` to avoid needing to escape backslashes.
-  - `flags`: An optional string with each character representing an option.
-    Supported flags are `i`, `m`, `s`, and `x`. See
-    [perlre](http://perldoc.perl.org/perlre.html) for details.
+- `pattern`: A string containing a Perl compatible regular expression.
+  Tip: use `String.raw` to avoid needing to escape backslashes.
+- `flags`: An optional string with each character representing an option.
+  Supported flags are `i`, `m`, `s`, and `x`. See
+  [perlre](http://perldoc.perl.org/perlre.html) for details.
 
 ```javascript
 const pattern = String.raw`\b hello \s* world \b`
