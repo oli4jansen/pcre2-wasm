@@ -7,13 +7,6 @@
             "name": "Mocha All",
             "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
             "args": [
-                "--exit",
-                "--timeout",
-                "999999",
-                "--colors",
-                "--require",
-                "@babel/register",
-                "--throw-deprecation",
                 "${workspaceFolder}/test"
             ],
             "console": "integratedTerminal",

@@ -1,0 +1,5 @@
+--exit
+--timeout 999999
+--colors
+--require @babel/register
+--throw-deprecation
