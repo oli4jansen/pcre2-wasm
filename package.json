@@ -1,6 +1,6 @@
 {
-  "name": "@desertnet/pcre",
-  "version": "0.0.2",
+  "name": "@stephen-riley/pcre",
+  "version": "0.1.0",
   "description": "Perl compatible regular expressions for JavaScript",
   "main": "dist/lib/index.js",
   "files": [
@@ -14,13 +14,13 @@
     "prepare": "npm run build",
     "prepublishOnly": "npm test",
     "preversion": "npm test && npm run lint",
-    "test": "make && cross-env NODE_ENV=test mocha --require @babel/register --throw-deprecation",
+    "test": "cross-env NODE_ENV=test mocha --exit --require '@babel/register' --throw-deprecation test/PCRETest.js",
     "test:coverage": "make && cross-env NODE_ENV=test nyc mocha",
     "test:watch": "chokidar src test mock fixtures Makefile --initial -c 'npm t'"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/desertnet/pcre.git"
+    "url": "git+https://github.com/stephen-riley/pcre.git"
   },
   "keywords": [
     "pcre",
@@ -28,15 +28,19 @@
     "perl",
     "regex"
   ],
-  "author": "Eric McCarthy <eric@limulus.net> (https://limulus.net/)",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "author": "Stephen Riley <jstephen.riley@yahoo.com> (https://github.com/stephen-riley)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/desertnet/pcre/issues"
+    "url": "https://github.com/stephen-riley/pcre/issues"
   },
-  "homepage": "https://github.com/desertnet/pcre#readme",
+  "homepage": "https://github.com/stephen-riley/pcre#readme",
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.53",
-    "@babel/core": "^7.0.0-beta.53",
+    "@babel/core": "^7.7.7",
+    "@babel/node": "^7.7.7",
     "@babel/preset-env": "^7.0.0-beta.53",
     "@babel/register": "^7.0.0-beta.53",
     "babel-eslint": "^8.2.5",
@@ -44,8 +48,11 @@
     "chokidar-cli": "^1.2.0",
     "cross-env": "^5.2.0",
     "eslint": "^5.1.0",
-    "mocha": "^5.2.0",
+    "mocha": "^6.2.2",
     "nyc": "^12.0.2",
     "rimraf": "^2.7.1"
+  },
+  "dependencies": {
+    "why-is-node-running": "^2.1.0"
   }
 }

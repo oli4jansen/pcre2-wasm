@@ -4,7 +4,7 @@ Perl compatible regular expressions for JavaScript
 
 ## Installation
 
-```
+```bash
 npm install @desertnet/pcre
 ```
 
@@ -101,3 +101,8 @@ your program will leak memory.
 ## Contributing
 
 Prerequisites for development include Docker, make and curl.
+
+## Credits
+
+This is a fork of [desertnet/pcre](https://github.com/desertnet/pcre), which provided
+the emscripten framework and initial API exposure of PCRE2.  Many thanks!
