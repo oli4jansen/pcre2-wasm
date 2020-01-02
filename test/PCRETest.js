@@ -38,7 +38,7 @@ describe(`PCRE`, function () {
   describe(`instance property`, function () {
     describe(`match()`, function () {
       let re
-      const subject = 'fe fi fo fum';
+      const subject = 'fe fi fo fum'
 
       beforeEach(function () {
         re = new PCRE('(?<first_f>f)(?<the_rest>[a-z]+)')
@@ -54,21 +54,21 @@ describe(`PCRE`, function () {
       })
 
       it(`should return array with matching string on match`, function () {
-        const matches = re.match(subject);
+        const matches = re.match(subject)
 
-        assert.strictEqual(matches[0].match, 'fe');
+        assert.strictEqual(matches[0].match, 'fe')
       })
 
       it(`should return named groups`, () => {
-        const matches = re.match(subject);
+        const matches = re.match(subject)
 
-        assert('first_f' in matches);
-        assert('the_rest' in matches);
+        assert('first_f' in matches)
+        assert('the_rest' in matches)
       })
 
       it(`should return numbered groups`, () => {
-        const matches = re.match(subject);
-        assert.strictEqual(matches.length, 3);
+        const matches = re.match(subject)
+        assert.strictEqual(matches.length, 3)
       })
     })
   })
