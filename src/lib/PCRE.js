@@ -61,9 +61,9 @@ export default class PCRE {
     this[ptrSym] = ptr
 
     // extract the nametable 
-    const nameCount = this.getMatchNameCount();
-    const entrySize = this.getMatchNameTableEntrySize();
-    const tableBuf = this.getMatchNameTable();
+    const nameCount = this.getMatchNameCount()
+    const entrySize = this.getMatchNameTableEntrySize()
+    const tableBuf = this.getMatchNameTable()
     this[nametableSym] = convertNameTable(tableBuf, nameCount, entrySize)
   }
 
@@ -108,12 +108,12 @@ export default class PCRE {
     )
 
     // extract the matches from the pcre2_match_data block
-    const matchCount = this.getOvectorCount(matchData);
+    const matchCount = this.getOvectorCount(matchData)
     if (matchCount === 0) {
       this.destroyMatchData(matchData)
       return null
     }
-    const vectorPtr = this.getOvectorPtr(matchData);
+    const vectorPtr = this.getOvectorPtr(matchData)
     const matches = convertOVector(subject, vectorPtr, matchCount)
 
     if (matches[0].start === 0 && matches[0].end === 0) {
