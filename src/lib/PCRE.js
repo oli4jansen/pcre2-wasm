@@ -1,4 +1,4 @@
-import libpcre2 from '../../dist/libpcre2.js'
+import libpcre2 from '../libpcre2.js'
 import assert from 'assert'
 import { TextDecoder } from 'util'
 

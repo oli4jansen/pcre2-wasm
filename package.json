@@ -2,7 +2,7 @@
   "name": "@stephen-riley/pcre",
   "version": "0.2.2",
   "description": "Perl compatible regular expressions for JavaScript",
-  "main": "dist/lib/index.js",
+  "main": "dist/lib/PCRE.js",
   "files": [
     "dist",
     "wasm"
