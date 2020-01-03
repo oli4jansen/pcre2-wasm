@@ -25,7 +25,9 @@ deps:
 dist/libpcre2.js: src/lib/libpcre2.c src/lib/config.js | deps dist
 	$(CC) /src/lib/libpcre2.c \
 		-s WASM=1 \
+		-O3 \
 		--pre-js /src/lib/config.js \
+		-s EXPORTED_FUNCTIONS='["_malloc", "_free"]' \
 		-s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap", "ccall", "getValue"]' \
 		-I/src/local/include \
 		-L/src/local/lib \
