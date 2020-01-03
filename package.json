@@ -28,9 +28,6 @@
     "perl",
     "regex"
   ],
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
   "author": "Stephen Riley <jstephen.riley@yahoo.com> (https://github.com/stephen-riley)",
   "license": "MIT",
   "bugs": {
