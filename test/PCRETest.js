@@ -1,6 +1,6 @@
 import assert from 'assert'
 
-import PCRE from '../src/lib/PCRE'
+import PCRE from '../dist/lib/PCRE'
 
 describe(`PCRE`, function () {
   describe(`init()`, function () {

@@ -5,7 +5,7 @@ Perl compatible regular expressions for JavaScript
 ## Installation
 
 ```bash
-npm install @desertnet/pcre
+npm install @stephen-riley/pcre
 ```
 
 ## Usage
@@ -19,7 +19,7 @@ a few unusual things when using this module:
 Before calling any constructors or methods, you must first asynchronously initialize the module by calling `init`.
 
 ```javascript
-import PCRE from '@desertnet/pcre'
+import PCRE from '@stephen-riley/pcre'
 
 async function main () {
   await PCRE.init()
@@ -41,7 +41,7 @@ is no longer needed.
 ## API
 
 ```javascript
-import PCRE from '@desertnet/pcre'
+import PCRE from '@stephen-riley/pcre'
 ```
 
 ### PCRE.init()
@@ -104,5 +104,5 @@ Prerequisites for development include Docker, make and curl.
 
 ## Credits
 
-This is a fork of [desertnet/pcre](https://github.com/desertnet/pcre), which provided
+This is a fork of [stephen-riley/pcre](https://github.com/stephen-riley/pcre), which provided
 the emscripten framework and initial API exposure of PCRE2.  Many thanks!

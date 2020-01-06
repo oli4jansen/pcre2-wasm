@@ -24,6 +24,7 @@ deps:
 
 dist/libpcre2.js: src/lib/libpcre2.c src/lib/config.js | deps dist
 	$(CC) /src/lib/libpcre2.c \
+		-g \
 		-s WASM=1 \
 		-O3 \
 		--pre-js /src/lib/config.js \
