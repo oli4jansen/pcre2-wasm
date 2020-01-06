@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "build": "rimraf dist && make && babel -s inline -D src -d dist",
+    "lightclean": "rimraf dist",
     "clean": "rimraf dist coverage .nyc_output deps/build",
     "lint": "eslint src test",
     "prepare": "npm run build",
