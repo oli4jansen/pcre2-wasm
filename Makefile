@@ -30,6 +30,8 @@ dist/libpcre2.js: src/lib/libpcre2.c src/lib/config.js | deps dist
 		--pre-js /src/lib/config.js \
 		-s EXPORTED_FUNCTIONS='["_malloc", "_free"]' \
 		-s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap", "ccall", "getValue"]' \
+		-s BINARYEN=1 \
+		-s FILESYSTEM=0 \
 		-I/src/local/include \
 		-L/src/local/lib \
 		-lpcre2-16 \
