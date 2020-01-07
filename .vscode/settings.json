@@ -4,6 +4,11 @@
         "map": "c",
         "unordered_map": "c",
         "*.tcc": "c",
-        "random": "c"
-    }
+        "random": "c",
+        "emscripten.h": "c"
+    },
+    "C_Cpp.default.includePath": [
+        "/usr/local/Cellar/emscripten/1.38.44/libexec/system/include",
+        "deps/build/local/include"
+    ]
 }
