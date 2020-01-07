@@ -10,6 +10,11 @@ const ptrSym = Symbol('ptr')
 const nametableSym = Symbol('nametable')
 const patternSym = Symbol('pattern')
 
+const PCRE2_NO_MATCH = -1
+const PCRE2_ERROR_NOMEMORY = -48
+
+const MAX_OUTPUT_BUFFER_SIZE = 100 * 1024 * 1024
+
 export default class PCRE {
   static async init() {
     await libpcre2.loaded
@@ -23,6 +28,7 @@ export default class PCRE {
       lastErrorMessage: libpcre2.cwrap('lastErrorMessage', 'number', ['number', 'number']),
       lastErrorOffset: libpcre2.cwrap('lastErrorOffset', 'number'),
       match: libpcre2.cwrap('match', 'number', ['number', 'array', 'number', 'number']),
+      substitute: libpcre2.cwrap('substitute', 'number', ['number', 'array', 'number', 'number', 'number', 'array', 'number', 'number', 'number']),
       createMatchData: libpcre2.cwrap('createMatchData', 'number', ['number']),
       destroyMatchData: libpcre2.cwrap('destroyMatchData', null, ['number']),
       getOvectorCount: libpcre2.cwrap('getOvectorCount', 'number', ['number']),
@@ -117,14 +123,20 @@ export default class PCRE {
 
     if (result < 0) {
       this.destroyMatchData(matchDataPtr)
-      const { errorMessage, offset } = this.getLastError()
-      if (errorMessage === "no error") {
+
+      if (result === PCRE2_NO_MATCH) {
         return null
       }
       else {
-        const err = new Error(errorMessage)
-        err.offset = offset
-        throw err
+        const { errorMessage, offset } = this.getLastError()
+        if (errorMessage === "no error") {
+          return null
+        }
+        else {
+          const err = new Error(errorMessage)
+          err.offset = offset
+          throw err
+        }
       }
     }
 
@@ -169,6 +181,64 @@ export default class PCRE {
     }
 
     return results
+  }
+
+  substitute(subject, replacement, start) {
+    assert(this[ptrSym])
+
+    if (start >= subject.length) {
+      return null
+    }
+
+    const startOffset = start || 0
+
+    const subjectBuffer = Buffer.from(subject, 'utf16le')
+
+    const matchDataPtr = this.createMatchData()
+
+    const replacementBuffer = Buffer.from(replacement, 'utf16le')
+
+    let factor = 1.5
+
+    for (; ;) {
+      // This size is in character units, not bytes
+      const outputBufferSize = Math.trunc(subject.length * factor)
+
+      if (outputBufferSize > MAX_OUTPUT_BUFFER_SIZE) {
+        break
+      }
+
+      const outputBuffer = allocateStringBuffer(outputBufferSize)
+
+      const result = cfunc.substitute(
+        this[ptrSym],
+        subjectBuffer,
+        subjectBuffer.length / 2,
+        startOffset,
+        matchDataPtr,
+        replacementBuffer,
+        replacementBuffer.length / 2,
+        outputBuffer,
+        outputBufferSize)
+
+      if (result === PCRE2_ERROR_NOMEMORY) {
+        cfunc.free(outputBuffer)
+        factor *= 2
+        continue
+      }
+      else if (result < 0) {
+        cfunc.free(outputBuffer)
+        return result
+      }
+
+      if (result > 0) {
+        return copyAndFreeStringBuffer(outputBuffer, result)
+      }
+      else {
+        cfunc.free(outputBuffer)
+        return subject
+      }
+    }
   }
 
   getOvectorCount(matchDataPtr) {

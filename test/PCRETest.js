@@ -51,10 +51,10 @@ describe(`PCRE`, function () {
   describe(`match()`, function () {
     let re
     const subject = 'fee fi fo fum'
-    const regex = '(?<first_f>f)(?<the_rest>[a-z]+)'
+    const pattern = '(?<first_f>f)(?<the_rest>[a-z]+)'
 
     beforeEach(function () {
-      re = new PCRE(regex)
+      re = new PCRE(pattern)
     })
 
     afterEach(function () {
@@ -88,10 +88,10 @@ describe(`PCRE`, function () {
   describe(`matchAll()`, function () {
     let re
     const subject = 'fe fi fo fum'
-    const regex = '(?<first_f>f)(?<the_rest>[a-z]+)'
+    const pattern = '(?<first_f>f)(?<the_rest>[a-z]+)'
 
     beforeEach(function () {
-      re = new PCRE(regex)
+      re = new PCRE(pattern)
     })
 
     afterEach(function () {
@@ -110,6 +110,27 @@ describe(`PCRE`, function () {
       assert.strictEqual(matches[1][0].match, 'fi')
       assert.strictEqual(matches[2][0].match, 'fo')
       assert.strictEqual(matches[3][0].match, 'fum')
+    })
+  })
+
+  describe(`substitute()`, function () {
+    let re
+    const subject = "hello there!"
+    const pattern = "(there)"
+    const replacement = "world"
+
+    beforeEach(function () {
+      re = new PCRE(pattern)
+    })
+
+    afterEach(function () {
+      re.destroy()
+    })
+
+    it(`should replace "there" with "world"`, function () {
+      const result = re.substitute(subject, replacement)
+
+      assert.strictEqual(result, "hello world!")
     })
   })
 })

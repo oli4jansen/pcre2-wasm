@@ -82,7 +82,7 @@ pcre2_match_data *createMatchData(pcre2_code *code)
 }
 
 EMSCRIPTEN_KEEPALIVE
-PCRE2_SIZE match(
+size_t match(
     pcre2_code *code,
     uint16_t *subject,
     PCRE2_SIZE length,
@@ -96,6 +96,34 @@ EMSCRIPTEN_KEEPALIVE
 void destroyMatchData(pcre2_match_data *data)
 {
   return pcre2_match_data_free(data);
+}
+
+// --------------------------------------------------------------------
+
+EMSCRIPTEN_KEEPALIVE
+size_t substitute(
+    pcre2_code *code,
+    uint16_t *subject,
+    PCRE2_SIZE length,
+    PCRE2_SIZE offset,
+    pcre2_match_data *matchData,
+    uint16_t *replacement,
+    PCRE2_SIZE rlength,
+    uint16_t *outputBuffer,
+    PCRE2_SIZE outlength)
+{
+  PCRE2_SIZE outlengthdest = outlength;
+
+  int result = pcre2_substitute(code, subject, length, offset, 0, matchData, NULL, replacement, rlength, outputBuffer, &outlengthdest);
+
+  if (result < 0)
+  {
+    return result;
+  }
+  else
+  {
+    return outlengthdest;
+  }
 }
 
 // --------------------------------------------------------------------
