@@ -13,7 +13,7 @@ describe(`PCRE basics`, function () {
   describe(`version()`, function () {
     it(`should return the version of the PCRE2 library`, function () {
       const version = PCRE.version()
-      assert.strictEqual(version, `10.31 2018-02-12`)
+      assert.strictEqual(version, `10.34 2019-11-21`)
     })
   })
 
