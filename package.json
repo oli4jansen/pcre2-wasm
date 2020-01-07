@@ -1,6 +1,6 @@
 {
   "name": "@stephen-riley/pcre",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Perl compatible regular expressions for JavaScript",
   "main": "dist/lib/PCRE.js",
   "files": [
