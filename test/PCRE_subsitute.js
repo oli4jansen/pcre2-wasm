@@ -26,5 +26,11 @@ describe(`PCRE single substitution`, function () {
 
       assert.strictEqual(result, "hello world!")
     })
+
+    it(`should replace "there" with "world", but only once`, function () {
+      const result = re.substitute("hello there, there!", replacement)
+
+      assert.strictEqual(result, "hello world, there!")
+    })
   })
 })

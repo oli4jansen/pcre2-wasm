@@ -12,6 +12,7 @@ const patternSym = Symbol('pattern')
 
 const PCRE2_NO_MATCH = -1
 const PCRE2_ERROR_NOMEMORY = -48
+const PCRE2_SUBSTITUTE_GLOBAL = 0x00000100
 
 const MAX_OUTPUT_BUFFER_SIZE = 100 * 1024 * 1024
 
@@ -28,7 +29,7 @@ export default class PCRE {
       lastErrorMessage: libpcre2.cwrap('lastErrorMessage', 'number', ['number', 'number']),
       lastErrorOffset: libpcre2.cwrap('lastErrorOffset', 'number'),
       match: libpcre2.cwrap('match', 'number', ['number', 'array', 'number', 'number']),
-      substitute: libpcre2.cwrap('substitute', 'number', ['number', 'array', 'number', 'number', 'number', 'array', 'number', 'number', 'number']),
+      substitute: libpcre2.cwrap('substitute', 'number', ['number', 'array', 'number', 'number', 'number', 'number', 'array', 'number', 'number', 'number']),
       createMatchData: libpcre2.cwrap('createMatchData', 'number', ['number']),
       destroyMatchData: libpcre2.cwrap('destroyMatchData', null, ['number']),
       getOvectorCount: libpcre2.cwrap('getOvectorCount', 'number', ['number']),
@@ -183,14 +184,19 @@ export default class PCRE {
     return results
   }
 
-  substitute(subject, replacement, start) {
+  substituteAll(subject, replacement) {
+    return this.substitute(subject, replacement, 0, PCRE2_SUBSTITUTE_GLOBAL)
+  }
+
+  substitute(subject, replacement, startOffset, options) {
     assert(this[ptrSym])
 
-    if (start >= subject.length) {
+    if (startOffset >= subject.length) {
       return null
     }
 
-    const startOffset = start || 0
+    startOffset = startOffset || 0
+    options = options || 0
 
     const subjectBuffer = Buffer.from(subject, 'utf16le')
 
@@ -216,6 +222,7 @@ export default class PCRE {
         subjectBuffer.length / 2,
         startOffset,
         matchDataPtr,
+        options,
         replacementBuffer,
         replacementBuffer.length / 2,
         outputBuffer,

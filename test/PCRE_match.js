@@ -28,6 +28,7 @@ describe(`PCRE single matching`, function () {
     it(`should return array with matching string on match`, function () {
       const matches = re.match(subject)
 
+      assert.strictEqual(typeof matches, 'object')
       assert.strictEqual(matches[0].match, 'fee')
     })
 

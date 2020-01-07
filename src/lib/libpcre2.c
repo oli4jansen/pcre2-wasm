@@ -107,6 +107,7 @@ size_t substitute(
     PCRE2_SIZE length,
     PCRE2_SIZE offset,
     pcre2_match_data *matchData,
+    uint32_t options,
     uint16_t *replacement,
     PCRE2_SIZE rlength,
     uint16_t *outputBuffer,
@@ -114,7 +115,7 @@ size_t substitute(
 {
   PCRE2_SIZE outlengthdest = outlength;
 
-  int result = pcre2_substitute(code, subject, length, offset, 0, matchData, NULL, replacement, rlength, outputBuffer, &outlengthdest);
+  int result = pcre2_substitute(code, subject, length, offset, options, matchData, NULL, replacement, rlength, outputBuffer, &outlengthdest);
 
   if (result < 0)
   {
