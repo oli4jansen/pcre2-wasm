@@ -8,6 +8,7 @@ const cfunc = {}
 
 const ptrSym = Symbol('ptr')
 const nametableSym = Symbol('nametable')
+const patternSym = Symbol('pattern')
 
 export default class PCRE {
   static async init() {
@@ -22,6 +23,7 @@ export default class PCRE {
       lastErrorMessage: libpcre2.cwrap('lastErrorMessage', 'number', ['number', 'number']),
       lastErrorOffset: libpcre2.cwrap('lastErrorOffset', 'number'),
       match: libpcre2.cwrap('match', 'number', ['number', 'array', 'number', 'number']),
+      createMatchData: libpcre2.cwrap('createMatchData', 'number', ['number']),
       destroyMatchData: libpcre2.cwrap('destroyMatchData', null, ['number']),
       getOvectorCount: libpcre2.cwrap('getOvectorCount', 'number', ['number']),
       getOvectorPtr: libpcre2.cwrap('getOvectorPointer', 'number', ['number']),
@@ -44,21 +46,18 @@ export default class PCRE {
 
   constructor(pattern, flags = '') {
     assert(initialized)
-    pattern = Buffer.from(pattern, 'utf16le')
-    const ptr = cfunc.compile(pattern, pattern.length / 2, flags)
+    const patternBuffer = Buffer.from(pattern, 'utf16le')
+    const ptr = cfunc.compile(patternBuffer, patternBuffer.length / 2, flags)
 
     if (ptr === 0) {
-      const errMsgBufLen = 256
-      const errMsgBuf = allocateStringBuffer(errMsgBufLen)
-      const actualErrMsgLen = cfunc.lastErrorMessage(errMsgBuf, errMsgBufLen)
-      const errorMessage = copyAndFreeStringBuffer(errMsgBuf, actualErrMsgLen)
-
+      const { errorMessage, offset } = this.getLastError()
       const err = new Error(errorMessage)
-      err.offset = cfunc.lastErrorOffset()
+      err.offset = offset
       throw err
     }
 
     this[ptrSym] = ptr
+    this[patternSym] = pattern
 
     // extract the nametable 
     const nameCount = this.getMatchNameCount()
@@ -73,6 +72,20 @@ export default class PCRE {
     this[ptrSym] = 0
   }
 
+  getLastError() {
+    const errMsgBufLen = 256
+    const errMsgBuf = allocateStringBuffer(errMsgBufLen)
+    const actualErrMsgLen = cfunc.lastErrorMessage(errMsgBuf, errMsgBufLen)
+    const errorMessage = copyAndFreeStringBuffer(errMsgBuf, actualErrMsgLen)
+    const offset = cfunc.lastErrorOffset()
+
+    return { errorMessage, offset }
+  }
+
+  createMatchData() {
+    return cfunc.createMatchData(this[ptrSym])
+  }
+
   destroyMatchData(matchDataPtr) {
     cfunc.destroyMatchData(matchDataPtr)
   }
@@ -81,45 +94,49 @@ export default class PCRE {
     return this.match(subject, options)
   }
 
-  match(subject, options) {
+  match(subject, start) {
     assert(this[ptrSym])
 
-    if (typeof options === 'string') {
-      options = {
-        startOffset: 0,
-        i: options.includes('i'),
-        s: options.includes('s'),
-        m: options.includes('m'),
-        g: options.includes('g'),
-      }
+    if (start >= subject.length) {
+      return null
     }
 
-    const { startOffset } = {
-      startOffset: 0,
-      ...options
-    }
+    const startOffset = start || 0
 
     const subjectBuffer = Buffer.from(subject, 'utf16le')
-    const matchData = cfunc.match(
+
+    const matchDataPtr = this.createMatchData()
+
+    const result = cfunc.match(
       this[ptrSym],
       subjectBuffer,
       subjectBuffer.length / 2,
-      startOffset
+      startOffset,
+      matchDataPtr
     )
 
-    // extract the matches from the pcre2_match_data block
-    const matchCount = this.getOvectorCount(matchData)
-    if (matchCount === 0) {
-      this.destroyMatchData(matchData)
-      return null
+    if (result < 0) {
+      this.destroyMatchData(matchDataPtr)
+      const { errorMessage, offset } = this.getLastError()
+      if (errorMessage === "no error") {
+        return null
+      }
+      else {
+        const err = new Error(errorMessage)
+        err.offset = offset
+        throw err
+      }
     }
-    const vectorPtr = this.getOvectorPtr(matchData)
-    const matches = convertOVector(subject, vectorPtr, matchCount)
 
-    if (matches[0].start === 0 && matches[0].end === 0) {
-      this.destroyMatchData(matchData)
+    // extract the matches from the pcre2_match_data block
+    const matchCount = this.getOvectorCount(matchDataPtr)
+    if (matchCount === 0) {
+      this.destroyMatchData(matchDataPtr)
       return null
     }
+
+    const vectorPtr = this.getOvectorPtr(matchDataPtr)
+    const matches = convertOVector(subject, vectorPtr, matchCount)
 
     // merge in nametable entries
     const results = { ...matches }
@@ -130,9 +147,27 @@ export default class PCRE {
       }
     }
 
-    this.destroyMatchData(matchData)
+    this.destroyMatchData(matchDataPtr)
 
     results.length = matchCount
+    return results
+  }
+
+  matchAll(subject) {
+    let safety = 1000
+
+    let results = []
+    let iter
+    let start = 0
+
+    while ((iter = this.match(subject, start)) !== null) {
+      results.push(iter)
+      start = iter[0].end
+
+      safety--
+      assert(safety > 0, 'safety limit exceeded')
+    }
+
     return results
   }
 

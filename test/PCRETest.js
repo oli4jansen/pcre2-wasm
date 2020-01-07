@@ -1,6 +1,6 @@
 import assert from 'assert'
 
-import PCRE from '../dist/lib/PCRE'
+import PCRE from '../src/lib/PCRE'
 
 describe(`PCRE`, function () {
   describe(`init()`, function () {
@@ -35,41 +35,81 @@ describe(`PCRE`, function () {
     })
   })
 
-  describe(`instance property`, function () {
-    describe(`match()`, function () {
-      let re
-      const subject = 'fe fi fo fum'
+  describe(`createMatchData()`, function () {
+    it(`should allocate a match data block`, function () {
+      const re = new PCRE('aaa')
 
-      beforeEach(function () {
-        re = new PCRE('(?<first_f>f)(?<the_rest>[a-z]+)')
-      })
+      const matchDataPtr = re.createMatchData()
+      assert(matchDataPtr)
+      if (matchDataPtr) {
+        re.destroyMatchData()
+      }
+      re.destroy()
+    })
+  })
 
-      afterEach(function () {
-        re.destroy()
-      })
+  describe(`match()`, function () {
+    let re
+    const subject = 'fee fi fo fum'
+    const regex = '(?<first_f>f)(?<the_rest>[a-z]+)'
 
-      it(`should return null on no match`, function () {
-        const matches = re.match('bar')
-        assert.strictEqual(matches, null)
-      })
+    beforeEach(function () {
+      re = new PCRE(regex)
+    })
 
-      it(`should return array with matching string on match`, function () {
-        const matches = re.match(subject)
+    afterEach(function () {
+      re.destroy()
+    })
 
-        assert.strictEqual(matches[0].match, 'fe')
-      })
+    it(`should return null on no match`, function () {
+      const matches = re.match('bar')
+      assert.strictEqual(matches, null)
+    })
 
-      it(`should return named groups`, () => {
-        const matches = re.match(subject)
+    it(`should return array with matching string on match`, function () {
+      const matches = re.match(subject)
 
-        assert('first_f' in matches)
-        assert('the_rest' in matches)
-      })
+      assert.strictEqual(matches[0].match, 'fee')
+    })
 
-      it(`should return numbered groups`, () => {
-        const matches = re.match(subject)
-        assert.strictEqual(matches.length, 3)
-      })
+    it(`should return named groups`, () => {
+      const matches = re.match(subject)
+
+      assert('first_f' in matches)
+      assert('the_rest' in matches)
+    })
+
+    it(`should return numbered groups`, () => {
+      const matches = re.match(subject)
+      assert.strictEqual(matches.length, 3)
+    })
+  })
+
+  describe(`matchAll()`, function () {
+    let re
+    const subject = 'fe fi fo fum'
+    const regex = '(?<first_f>f)(?<the_rest>[a-z]+)'
+
+    beforeEach(function () {
+      re = new PCRE(regex)
+    })
+
+    afterEach(function () {
+      re.destroy()
+    })
+
+    it(`should return empty array on no match`, function () {
+      const matches = re.matchAll('bar')
+      assert.deepEqual(matches, [])
+    })
+
+    it(`should return array with matching string on match`, function () {
+      const matches = re.matchAll(subject)
+
+      assert.strictEqual(matches[0][0].match, 'fe')
+      assert.strictEqual(matches[1][0].match, 'fi')
+      assert.strictEqual(matches[2][0].match, 'fo')
+      assert.strictEqual(matches[3][0].match, 'fum')
     })
   })
 })

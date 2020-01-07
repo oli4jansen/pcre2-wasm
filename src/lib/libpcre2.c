@@ -76,17 +76,20 @@ void destroyCode(pcre2_code *code)
 // --------------------------------------------------------------------
 
 EMSCRIPTEN_KEEPALIVE
-pcre2_match_data *match(
+pcre2_match_data *createMatchData(pcre2_code *code)
+{
+  return pcre2_match_data_create_from_pattern(code, NULL);
+}
+
+EMSCRIPTEN_KEEPALIVE
+PCRE2_SIZE match(
     pcre2_code *code,
     uint16_t *subject,
     PCRE2_SIZE length,
-    PCRE2_SIZE offset)
+    PCRE2_SIZE offset,
+    pcre2_match_data *matchData)
 {
-  pcre2_match_data *result = pcre2_match_data_create_from_pattern(code, NULL);
-
-  pcre2_match(code, subject, length, offset, 0, result, NULL);
-
-  return result;
+  return pcre2_match(code, subject, length, offset, 0, matchData, NULL);
 }
 
 EMSCRIPTEN_KEEPALIVE
