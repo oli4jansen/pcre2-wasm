@@ -1,4 +1,4 @@
-# pcre
+# pcre2-wasm
 
 PCRE2 (Perl Compatible Regular Expressions) compiled to WebAssembly
 
