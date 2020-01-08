@@ -1,11 +1,11 @@
 # pcre
 
-Perl compatible regular expressions for JavaScript
+PCRE2 (Perl Compatible Regular Expressions) compiled to WebAssembly
 
 ## Installation
 
 ```bash
-npm install @stephen-riley/pcre
+npm install @stephen-riley/pcre2-wasm
 ```
 
 ## Usage
@@ -19,7 +19,7 @@ a few unusual things when using this module:
 Before calling any constructors or methods, you must first asynchronously initialize the module by calling `init`.
 
 ```javascript
-import PCRE from '@stephen-riley/pcre'
+import PCRE from '@stephen-riley/pcre2-wasm'
 
 async function main () {
   await PCRE.init()
@@ -41,7 +41,7 @@ is no longer needed.
 ## API
 
 ```javascript
-import PCRE from '@stephen-riley/pcre'
+import PCRE from '@stephen-riley/pcre20wasm'
 ```
 
 ### `PCRE.init()`
