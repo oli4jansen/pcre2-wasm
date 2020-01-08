@@ -56,5 +56,29 @@ describe(`PCRE single matching`, function () {
       }, /PCRE2_ERROR_UTF16_/)
       re.destroy()
     })
+
+    it(`should handle case-insensitivity`, function () {
+      const re = new PCRE("a", "i")
+      const result = re.match("A")
+      re.destroy()
+
+      assert.notStrictEqual(result, null)
+    })
+
+    it(`should handle the s flag correctly`, function () {
+      const re = new PCRE(".*", "s")
+      const result = re.match("a\nb")
+      re.destroy()
+
+      assert.strictEqual(result[0].match, "a\nb")
+    })
+
+    it(`should handle the x flag correctly`, function () {
+      const re = new PCRE("x y z", "x")
+      const result = re.match("xyz")
+      re.destroy()
+
+      assert.notStrictEqual(result, null)
+    })
   })
 })

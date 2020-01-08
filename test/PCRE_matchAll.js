@@ -41,5 +41,15 @@ describe(`PCRE multiple matching`, function () {
       }, /PCRE2_ERROR_UTF16_/)
       re.destroy()
     })
+
+    it(`should handle the m flag correctly`, function () {
+      const lines = ["aa", "bb"]
+      const re = new PCRE("^(..)$", "m")
+      const results = re.matchAll(lines.join("\n"))
+      re.destroy()
+
+      assert.strictEqual(results[0][0].match, lines[0])
+      assert.strictEqual(results[1][0].match, lines[1])
+    })
   })
 })

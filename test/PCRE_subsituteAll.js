@@ -50,5 +50,14 @@ describe(`PCRE multiple substitutions`, function () {
       }, /PCRE2_ERROR_UTF16_/)
       re.destroy()
     })
+
+    it(`should use back references correctly with m flag`, function () {
+      const subject = "first second" + "\n" + "third fourth"
+      const re = new PCRE("^([a-z]+) ([a-z]+)$", "m")
+      const result = re.substituteAll(subject, "$2 $1")
+      re.destroy()
+
+      assert.strictEqual(result, "second first\nfourth third")
+    })
   })
 })

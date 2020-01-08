@@ -71,5 +71,22 @@ describe(`PCRE single substitution`, function () {
       const matches = re.substitute(subject, "a", subject.length + 1)
       assert.strictEqual(matches, null)
     })
+
+    it(`should use back references correctly`, function () {
+      const subject = "first second"
+      const re = new PCRE("^([a-z]+) ([a-z]+)$")
+      const result = re.substitute(subject, "$2 $1")
+      re.destroy()
+
+      assert.strictEqual(result, "second first")
+    })
+
+    it(`should handle case-insensitivity`, function () {
+      const re = new PCRE("a", "i")
+      const result = re.substitute("A", "b")
+      re.destroy()
+
+      assert.strictEqual(result, "b")
+    })
   })
 })
