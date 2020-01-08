@@ -33,5 +33,13 @@ describe(`PCRE multiple matching`, function () {
       assert.strictEqual(matches[2][0].match, 'fo')
       assert.strictEqual(matches[3][0].match, 'fum')
     })
+
+    it(`should throw an error code on invalid utf16 string`, function () {
+      const re = new PCRE('a')
+      assert.throws(() => {
+        re.matchAll('\uD800')  // unpaired lead surrogate
+      }, /PCRE2_ERROR_UTF16_/)
+      re.destroy()
+    })
   })
 })

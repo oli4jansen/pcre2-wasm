@@ -14,7 +14,7 @@ const PCRE2_NO_MATCH = -1
 const PCRE2_ERROR_NOMEMORY = -48
 const PCRE2_SUBSTITUTE_GLOBAL = 0x00000100
 
-const MAX_OUTPUT_BUFFER_SIZE = 100 * 1024 * 1024
+const MAX_OUTPUT_BUFFER_SIZE = 1 * 1024 * 1024
 
 export default class PCRE {
   static async init() {
@@ -98,7 +98,12 @@ export default class PCRE {
   }
 
   exec(subject, options) {
-    return this.match(subject, options)
+    if (options === "g") {
+      return this.matchAll(subject)
+    }
+    else {
+      return this.match(subject)
+    }
   }
 
   match(subject, start) {
@@ -129,25 +134,15 @@ export default class PCRE {
         return null
       }
       else {
-        const { errorMessage, offset } = this.getLastError()
-        if (errorMessage === "no error") {
-          return null
-        }
-        else {
-          const err = new Error(errorMessage)
-          err.offset = offset
-          throw err
-        }
+        const msg = getPCRE2Error(result)
+        const err = new Error(msg)
+        err.code = result
+        throw err
       }
     }
 
     // extract the matches from the pcre2_match_data block
     const matchCount = this.getOvectorCount(matchDataPtr)
-    if (matchCount === 0) {
-      this.destroyMatchData(matchDataPtr)
-      return null
-    }
-
     const vectorPtr = this.getOvectorPtr(matchDataPtr)
     const matches = convertOVector(subject, vectorPtr, matchCount)
 
@@ -211,7 +206,7 @@ export default class PCRE {
       const outputBufferSize = Math.trunc(subject.length * factor)
 
       if (outputBufferSize > MAX_OUTPUT_BUFFER_SIZE) {
-        break
+        return PCRE2_ERROR_NOMEMORY
       }
 
       const outputBuffer = allocateStringBuffer(outputBufferSize)
@@ -238,13 +233,7 @@ export default class PCRE {
         return result
       }
 
-      if (result > 0) {
-        return copyAndFreeStringBuffer(outputBuffer, result)
-      }
-      else {
-        cfunc.free(outputBuffer)
-        return subject
-      }
+      return copyAndFreeStringBuffer(outputBuffer, result)
     }
   }
 
@@ -330,4 +319,84 @@ function utf16lelen(ptr) {
     ptr += 2
   }
   return len
+}
+
+const ERRORS = {
+  "-1": "PCRE2_ERROR_NOMATCH",
+  "-2": "PCRE2_ERROR_PARTIAL",
+  "-3": "PCRE2_ERROR_UTF8_ERR1",
+  "-4": "PCRE2_ERROR_UTF8_ERR2",
+  "-5": "PCRE2_ERROR_UTF8_ERR3",
+  "-6": "PCRE2_ERROR_UTF8_ERR4",
+  "-7": "PCRE2_ERROR_UTF8_ERR5",
+  "-8": "PCRE2_ERROR_UTF8_ERR6",
+  "-9": "PCRE2_ERROR_UTF8_ERR7",
+  "-10": "PCRE2_ERROR_UTF8_ERR8",
+  "-11": "PCRE2_ERROR_UTF8_ERR9",
+  "-12": "PCRE2_ERROR_UTF8_ERR10",
+  "-13": "PCRE2_ERROR_UTF8_ERR11",
+  "-14": "PCRE2_ERROR_UTF8_ERR12",
+  "-15": "PCRE2_ERROR_UTF8_ERR13",
+  "-16": "PCRE2_ERROR_UTF8_ERR14",
+  "-17": "PCRE2_ERROR_UTF8_ERR15",
+  "-18": "PCRE2_ERROR_UTF8_ERR16",
+  "-19": "PCRE2_ERROR_UTF8_ERR17",
+  "-20": "PCRE2_ERROR_UTF8_ERR18",
+  "-21": "PCRE2_ERROR_UTF8_ERR19",
+  "-22": "PCRE2_ERROR_UTF8_ERR20",
+  "-23": "PCRE2_ERROR_UTF8_ERR21",
+  "-24": "PCRE2_ERROR_UTF16_ERR1",
+  "-25": "PCRE2_ERROR_UTF16_ERR2",
+  "-26": "PCRE2_ERROR_UTF16_ERR3",
+  "-27": "PCRE2_ERROR_UTF32_ERR1",
+  "-28": "PCRE2_ERROR_UTF32_ERR2",
+  "-29": "PCRE2_ERROR_BADDATA",
+  "-30": "PCRE2_ERROR_MIXEDTABLES",
+  "-31": "PCRE2_ERROR_BADMAGIC",
+  "-32": "PCRE2_ERROR_BADMODE",
+  "-33": "PCRE2_ERROR_BADOFFSET",
+  "-34": "PCRE2_ERROR_BADOPTION",
+  "-35": "PCRE2_ERROR_BADREPLACEMENT",
+  "-36": "PCRE2_ERROR_BADUTFOFFSET",
+  "-37": "PCRE2_ERROR_CALLOUT",
+  "-38": "PCRE2_ERROR_DFA_BADRESTART",
+  "-39": "PCRE2_ERROR_DFA_RECURSE",
+  "-40": "PCRE2_ERROR_DFA_UCOND",
+  "-41": "PCRE2_ERROR_DFA_UFUNC",
+  "-42": "PCRE2_ERROR_DFA_UITEM",
+  "-43": "PCRE2_ERROR_DFA_WSSIZE",
+  "-44": "PCRE2_ERROR_INTERNAL",
+  "-45": "PCRE2_ERROR_JIT_BADOPTION",
+  "-46": "PCRE2_ERROR_JIT_STACKLIMIT",
+  "-47": "PCRE2_ERROR_MATCHLIMIT",
+  "-48": "PCRE2_ERROR_NOMEMORY",
+  "-49": "PCRE2_ERROR_NOSUBSTRING",
+  "-50": "PCRE2_ERROR_NOUNIQUESUBSTRING",
+  "-51": "PCRE2_ERROR_NULL",
+  "-52": "PCRE2_ERROR_RECURSELOOP",
+  "-53": "PCRE2_ERROR_DEPTHLIMIT",
+  "-54": "PCRE2_ERROR_UNAVAILABLE",
+  "-55": "PCRE2_ERROR_UNSET",
+  "-56": "PCRE2_ERROR_BADOFFSETLIMIT",
+  "-57": "PCRE2_ERROR_BADREPESCAPE",
+  "-58": "PCRE2_ERROR_REPMISSINGBRACE",
+  "-59": "PCRE2_ERROR_BADSUBSTITUTION",
+  "-60": "PCRE2_ERROR_BADSUBSPATTERN",
+  "-61": "PCRE2_ERROR_TOOMANYREPLACE",
+  "-62": "PCRE2_ERROR_BADSERIALIZEDDATA",
+  "-63": "PCRE2_ERROR_HEAPLIMIT",
+  "-64": "PCRE2_ERROR_CONVERT_SYNTAX",
+  "-65": "PCRE2_ERROR_INTERNAL_DUPMATCH",
+  "-66": "PCRE2_ERROR_DFA_UINVALID_UTF",
+}
+
+function getPCRE2Error(result) {
+  const code = `${result}`
+
+  if (code in ERRORS) {
+    return ERRORS[code]
+  }
+  else {
+    return "UNKNOWN"
+  }
 }

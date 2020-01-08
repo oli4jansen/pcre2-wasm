@@ -3,5 +3,6 @@
   "instrument": false,
   "require": [
     "@babel/register"
-  ]
+  ],
+  "include": ["src/**"]
 }

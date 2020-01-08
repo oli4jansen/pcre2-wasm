@@ -47,4 +47,22 @@ describe(`PCRE basics`, function () {
       re.destroy()
     })
   })
+
+  describe(`getCaptureCount()`, function () {
+    it(`should return the correct count`, function () {
+      const re = new PCRE('match (one) (two)')
+      const count = re.getCaptureCount()
+      re.destroy()
+
+      assert.strictEqual(count, 2)
+    })
+
+    it(`should return 0 on no captures`, function () {
+      const re = new PCRE('match none')
+      const count = re.getCaptureCount()
+      re.destroy()
+
+      assert.strictEqual(count, 0)
+    })
+  })
 })

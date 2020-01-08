@@ -43,5 +43,18 @@ describe(`PCRE single matching`, function () {
       const matches = re.match(subject)
       assert.strictEqual(matches.length, 3)
     })
+
+    it(`should return null if start offset is > subject length`, function () {
+      const matches = re.match(subject, subject.length + 1)
+      assert.strictEqual(matches, null)
+    })
+
+    it(`should throw an error code on invalid utf16 string`, function () {
+      const re = new PCRE('a')
+      assert.throws(() => {
+        re.match('\uD800')  // unpaired lead surrogate
+      }, /PCRE2_ERROR_UTF16_/)
+      re.destroy()
+    })
   })
 })
