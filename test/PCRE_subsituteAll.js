@@ -45,10 +45,10 @@ describe(`PCRE multiple substitutions`, function () {
     it(`should return an error code on invalid utf16 string`, function () {
       const subject = 'a'
       const re = new PCRE('a')
-      const result = re.substituteAll(subject, '\uD800') // unpaired lead surrogate
+      assert.throws(() => {
+        re.substituteAll(subject, '\uD800') // unpaired lead surrogate      
+      }, /PCRE2_ERROR_UTF16_/)
       re.destroy()
-
-      assert.ok(result < 0)
     })
   })
 })

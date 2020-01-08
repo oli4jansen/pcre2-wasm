@@ -223,14 +223,21 @@ export default class PCRE {
         outputBuffer,
         outputBufferSize)
 
-      if (result === PCRE2_ERROR_NOMEMORY) {
-        cfunc.free(outputBuffer)
-        factor *= 2
-        continue
-      }
-      else if (result < 0) {
-        cfunc.free(outputBuffer)
-        return result
+      if (result < 0) {
+        this.destroyMatchData(matchDataPtr)
+
+        if (result === PCRE2_ERROR_NOMEMORY) {
+          cfunc.free(outputBuffer)
+          factor *= 2
+          continue
+        }
+        else {
+          cfunc.free(outputBuffer)
+          const msg = getPCRE2Error(result)
+          const err = new Error(msg)
+          err.code = result
+          throw err
+        }
       }
 
       return copyAndFreeStringBuffer(outputBuffer, result)

@@ -61,10 +61,10 @@ describe(`PCRE single substitution`, function () {
     it(`should return an error code on invalid utf16 string`, function () {
       const subject = 'a'
       const re = new PCRE('a')
-      const result = re.substitute(subject, '\uD800') // unpaired lead surrogate
+      assert.throws(() => {
+        re.substitute(subject, '\uD800') // unpaired lead surrogate      
+      }, /PCRE2_ERROR_UTF16_/)
       re.destroy()
-
-      assert.ok(result < 0)
     })
 
     it(`should return null if start offset is > subject length`, function () {
