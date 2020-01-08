@@ -98,7 +98,7 @@ export default class PCRE {
   }
 
   exec(subject, options) {
-    if (options === "g") {
+    if (options) {
       return this.matchAll(subject)
     }
     else {
