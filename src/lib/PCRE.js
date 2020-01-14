@@ -152,6 +152,8 @@ export default class PCRE {
       if (i in this[nametableSym]) {
         const name = this[nametableSym][i]
         results[name] = matches[i]
+        results[name].group = i
+        matches[i].label = name
       }
     }
 
