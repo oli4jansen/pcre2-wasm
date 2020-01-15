@@ -153,7 +153,7 @@ export default class PCRE {
         const name = this[nametableSym][i]
         results[name] = matches[i]
         results[name].group = i
-        matches[i].label = name
+        matches[i].name = name
       }
     }
 

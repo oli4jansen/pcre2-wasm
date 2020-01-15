@@ -49,8 +49,8 @@ describe(`PCRE single matching`, function () {
 
       assert.strictEqual(matches['first_f'].group, '1')
       assert.strictEqual(matches['the_rest'].group, '2')
-      assert.strictEqual(matches[1].label, 'first_f')
-      assert.strictEqual(matches[2].label, 'the_rest')
+      assert.strictEqual(matches[1].name, 'first_f')
+      assert.strictEqual(matches[2].name, 'the_rest')
     })
 
     it(`should return null if start offset is > subject length`, function () {
