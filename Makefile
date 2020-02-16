@@ -31,6 +31,7 @@ dist/libpcre2.js: src/lib/libpcre2.c src/lib/config.js | deps dist
 		-s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap", "ccall", "getValue"]' \
 		-s BINARYEN=1 \
 		-s FILESYSTEM=0 \
+		-s ASSERTIONS=2 \
 		-I/src/local/include \
 		-L/src/local/lib \
 		-lpcre2-16 \

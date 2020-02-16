@@ -88,5 +88,16 @@ describe(`PCRE single substitution`, function () {
 
       assert.strictEqual(result, "b")
     })
+
+    // covers issue 7 (https://github.com/stephen-riley/regexworkbench/issues/7)
+    it(`should handle extended substitution simple case conversion`, function () {
+      const re = new PCRE("ID_OSOB_([A-Z_a-złóźżćęą]+)")
+      const subject = "ID_OSOB_Bułgaria"
+      const replace = 'ID_OSOB_\\U$1(""),'
+      const result = re.substitute(subject, replace)
+      re.destroy()
+
+      assert.strictEqual(result, 'ID_OSOB_BUŁGARIA(""),')
+    })
   })
 })

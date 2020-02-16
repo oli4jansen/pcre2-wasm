@@ -13,6 +13,7 @@ const patternSym = Symbol('pattern')
 const PCRE2_NO_MATCH = -1
 const PCRE2_ERROR_NOMEMORY = -48
 const PCRE2_SUBSTITUTE_GLOBAL = 0x00000100
+const PCRE2_SUBSTITUTE_EXTENDED = 0x00000200
 
 const MAX_OUTPUT_BUFFER_SIZE = 1 * 1024 * 1024
 
@@ -193,17 +194,17 @@ export default class PCRE {
     }
 
     startOffset = startOffset || 0
-    options = options || 0
+    options = options || PCRE2_SUBSTITUTE_EXTENDED
 
     const subjectBuffer = Buffer.from(subject, 'utf16le')
-
-    const matchDataPtr = this.createMatchData()
 
     const replacementBuffer = Buffer.from(replacement, 'utf16le')
 
     let factor = 1.5
 
     for (; ;) {
+      const matchDataPtr = this.createMatchData()
+
       // This size is in character units, not bytes
       const outputBufferSize = Math.trunc(subject.length * factor)
 
