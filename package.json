@@ -1,6 +1,6 @@
 {
   "name": "@stephen-riley/pcre2-wasm",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "PCRE2 (Perl Compatible Regular Expressions 2) compiled to WebAssembly",
   "main": "dist/lib/PCRE.js",
   "files": [
