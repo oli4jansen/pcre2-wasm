@@ -59,5 +59,16 @@ describe(`PCRE multiple substitutions`, function () {
 
       assert.strictEqual(result, "second first\nfourth third")
     })
+
+    // covers issue 7 (https://github.com/stephen-riley/regexworkbench/issues/7)
+    it(`should handle extended substitution simple case conversion`, function () {
+      const re = new PCRE("ID_OSOB_([A-Z_a-złóźżćęą]+)")
+      const subject = "ID_OSOB_Bułgaria"
+      const replace = 'ID_OSOB_\\U$1(""),'
+      const result = re.substituteAll(subject, replace)
+      re.destroy()
+
+      assert.strictEqual(result, 'ID_OSOB_BUŁGARIA(""),')
+    })
   })
 })

@@ -194,7 +194,8 @@ export default class PCRE {
     }
 
     startOffset = startOffset || 0
-    options = options || PCRE2_SUBSTITUTE_EXTENDED
+    options = options || 0
+    options = options | PCRE2_SUBSTITUTE_EXTENDED
 
     const subjectBuffer = Buffer.from(subject, 'utf16le')
 
