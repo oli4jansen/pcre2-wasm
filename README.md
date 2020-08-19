@@ -41,7 +41,7 @@ is no longer needed.
 ## API
 
 ```javascript
-import PCRE from '@stephen-riley/pcre20wasm'
+import PCRE from '@stephen-riley/pcre2-wasm'
 ```
 
 ### `PCRE.init()`
