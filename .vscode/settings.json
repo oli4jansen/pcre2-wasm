@@ -10,5 +10,10 @@
     "C_Cpp.default.includePath": [
         "/usr/local/Cellar/emscripten/1.38.44/libexec/system/include",
         "deps/build/local/include"
-    ]
+    ],
+    "[js]": {
+        "editor.detectIndentation": false,
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true
+    }
 }
