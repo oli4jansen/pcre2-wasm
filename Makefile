@@ -37,6 +37,7 @@ dist/libpcre2.js: src/lib/libpcre2.c src/lib/config.js | deps dist
 		-L/src/local/lib \
 		-lpcre2-16 \
 		-o libpcre2.js
+	sed -i '' 's/throw new WebAssembly.RuntimeError(what)/\/\/ throw new WebAssembly.RuntimeError(what)/' deps/build/libpcre2.js
 	cp deps/build/libpcre2.{wasm,js} dist/
 
 # ----------------------------------------------------------------------
