@@ -3,7 +3,7 @@
 # ----------------------------------------------------------------------
 
 PCRE2_VERSION=10.34
-PCRE2_TARBALL_URL=https://ftp.pcre.org/pub/pcre/pcre2-$(PCRE2_VERSION).tar.bz2
+PCRE2_TARBALL_URL="https://ftp.exim.org/pub/pcre/pcre2-$(PCRE2_VERSION).tar.bz2"
 
 # ----------------------------------------------------------------------
 
