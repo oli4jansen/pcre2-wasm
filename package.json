@@ -14,10 +14,7 @@
     "lint": "eslint src test",
     "prepare": "npm run build",
     "prepublishOnly": "npm test",
-    "preversion": "npm test && npm run lint",
-    "test": "make && cross-env NODE_ENV=test mocha --exit --require '@babel/register' --throw-deprecation test/",
-    "test:coverage": "make && cross-env NODE_ENV=test nyc mocha",
-    "test:watch": "chokidar src test mock fixtures Makefile --initial -c 'npm t'"
+    "preversion": "npm test && npm run lint"
   },
   "repository": {
     "type": "git",
@@ -46,8 +43,6 @@
     "chokidar-cli": "^1.2.3",
     "cross-env": "^5.2.1",
     "eslint": "^5.16.0",
-    "mocha": "^6.2.2",
-    "nyc": "^12.0.2",
     "rimraf": "^2.7.1"
   }
 }
