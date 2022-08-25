@@ -1,6 +1,4 @@
 import libpcre2 from '../../dist/libpcre2.js'
-import assert from 'assert'
-import { TextDecoder } from 'util'
 
 const utf16Decoder = new TextDecoder('utf-16')
 let initialized = false

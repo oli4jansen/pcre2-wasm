@@ -33,6 +33,9 @@ dist/libpcre2.js: src/lib/libpcre2.c src/lib/config.js | deps dist
 		-s BINARYEN=1 \
 		-s FILESYSTEM=0 \
 		-s ASSERTIONS=2 \
+		-s MODULARIZE \
+		-s ENVIRONMENT=web \
+		-s EXPORT_ES6=1 \
 		-I/src/local/include \
 		-L/src/local/lib \
 		-lpcre2-16 \

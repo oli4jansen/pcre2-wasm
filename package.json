@@ -1,6 +1,6 @@
 {
-  "name": "@stephen-riley/pcre2-wasm",
-  "version": "1.2.4",
+  "name": "@spinque/pcre2-wasm",
+  "version": "1.2.5",
   "description": "PCRE2 (Perl Compatible Regular Expressions 2) compiled to WebAssembly",
   "main": "dist/lib/PCRE.js",
   "files": [
@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stephen-riley/pcre2-wasm.git"
+    "url": "git+https://github.com/oli4jansen/pcre2-wasm.git"
   },
   "keywords": [
     "pcre",
@@ -29,12 +29,12 @@
     "perl",
     "regex"
   ],
-  "author": "Stephen Riley <jstephen.riley@yahoo.com> (https://github.com/stephen-riley)",
+  "author": "Olivier Jansen <olivier@spinque.com> (https://github.com/oli4jansen)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/stephen-riley/pcre2-wasm/issues"
+    "url": "https://github.com/oli4jansen/pcre2-wasm/issues"
   },
-  "homepage": "https://github.com/stephen-riley/pcre2-wasm#readme",
+  "homepage": "https://github.com/oli4jansen/pcre2-wasm#readme",
   "devDependencies": {
     "@babel/cli": "^7.8.3",
     "@babel/core": "^7.8.3",
