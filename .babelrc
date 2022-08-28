@@ -2,15 +2,8 @@
   "presets": [
     ["@babel/env", {
       "targets": {
-        "node": 10
+        "chrome": "100"
       }
     }]
-  ],
-  "env": {
-    "test": {
-      "plugins": [
-        "istanbul"
-      ]
-    }
-  }
+  ]
 }

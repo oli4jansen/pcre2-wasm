@@ -22,25 +22,28 @@ deps:
 
 # ----------------------------------------------------------------------
 
-dist/libpcre2.js: src/lib/libpcre2.c src/lib/config.js | deps dist
+dist/libpcre2.js: src/lib/libpcre2.c | deps dist
 	$(CC) /src/lib/libpcre2.c \
 		-s WASM=1 \
 		-O3 \
 		-g2 \
-		--pre-js /src/lib/config.js \
+		--pre-js /src/lib/pre.js \
+		--post-js /src/lib/PCRE.js \
 		-s EXPORTED_FUNCTIONS='["_malloc", "_free"]' \
 		-s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap", "ccall", "getValue"]' \
 		-s BINARYEN=1 \
 		-s FILESYSTEM=0 \
 		-s ASSERTIONS=2 \
-		-s MODULARIZE \
-		-s ENVIRONMENT=web \
+		-s MODULARIZE=1 \
+		-s EXPORT_NAME='libpcre2' \
 		-s EXPORT_ES6=1 \
+		-s ENVIRONMENT=web \
+		-s SINGLE_FILE=1 \
 		-I/src/local/include \
 		-L/src/local/lib \
 		-lpcre2-16 \
 		-o libpcre2.js
 	sed -i '' 's/throw new WebAssembly.RuntimeError(what)/\/\/ throw new WebAssembly.RuntimeError(what)/' deps/build/libpcre2.js
-	cp deps/build/libpcre2.{wasm,js} dist/
+	cp deps/build/libpcre2.js dist/
 
 # ----------------------------------------------------------------------

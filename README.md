@@ -1,11 +1,11 @@
 # pcre2-wasm
 
-PCRE2 (Perl Compatible Regular Expressions) compiled to WebAssembly
+PCRE2 (Perl Compatible Regular Expressions) compiled to WebAssembly for use in the browser.
 
 ## Installation
 
 ```bash
-npm install @stephen-riley/pcre2-wasm
+npm install @ofjansen/pcre2-wasm
 ```
 
 ## Usage
@@ -19,10 +19,11 @@ a few unusual things when using this module:
 Before calling any constructors or methods, you must first asynchronously initialize the module by calling `init`.
 
 ```javascript
-import PCRE from '@stephen-riley/pcre2-wasm'
+import libpcre2 from '@ofjansen/pcre2-wasm';
 
 async function main () {
-  await PCRE.init()
+  const lib = libpcre2();
+  lib.PCRE.init();
   // make other PCRE calls...
 }
 
@@ -41,7 +42,9 @@ is no longer needed.
 ## API
 
 ```javascript
-import PCRE from '@stephen-riley/pcre2-wasm'
+import libpcre2 from '@ofjansen/pcre2-wasm';
+
+const lib = libpcre2();
 ```
 
 ### `PCRE.init()`
@@ -150,4 +153,4 @@ Prerequisites for development include Docker, `make`, and `curl`.  All emscripte
 
 ## Credits
 
-This is a fork of [desertnet/pcre](https://github.com/desertnet/pcre), which provided the emscripten framework and initial API exposure of PCRE2.  Many thanks!
+This is a fork of [stephen-riley/pcre2-wasm](https://github.com/stephen-riley/pcre2-wasm), with minor adjustments to make it work in a browser application I'm working on.

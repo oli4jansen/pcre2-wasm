@@ -1,5 +1,3 @@
-import libpcre2 from '../../dist/libpcre2.js'
-
 const utf16Decoder = new TextDecoder('utf-16')
 let initialized = false
 const cfunc = {}
@@ -15,39 +13,54 @@ const PCRE2_SUBSTITUTE_EXTENDED = 0x00000200
 
 const MAX_OUTPUT_BUFFER_SIZE = 1 * 1024 * 1024
 
-export default class PCRE {
-  static async init() {
-    await libpcre2.loaded
+class PCRE {
+  static init() {
+    if (initialized) {
+      return Promise.resolve();
+    }
+    return libpcre2.loaded.then(() => {
+      Object.assign(cfunc, {
+        malloc(bytes) { return libpcre2._malloc(bytes) },
+        free(ptr) { return libpcre2._free(ptr) },
+        version: libpcre2.cwrap('version', 'number', ['number']),
+        compile: libpcre2.cwrap('compile', 'number', ['array', 'number', 'string']),
+        destroyCode: libpcre2.cwrap('destroyCode', null, ['number']),
+        lastErrorMessage: libpcre2.cwrap('lastErrorMessage', 'number', ['number', 'number']),
+        lastErrorOffset: libpcre2.cwrap('lastErrorOffset', 'number'),
+        match: libpcre2.cwrap('match', 'number', ['number', 'array', 'number', 'number']),
+        substitute: libpcre2.cwrap('substitute', 'number', ['number', 'array', 'number', 'number', 'number', 'number', 'array', 'number', 'number', 'number']),
+        createMatchData: libpcre2.cwrap('createMatchData', 'number', ['number']),
+        destroyMatchData: libpcre2.cwrap('destroyMatchData', null, ['number']),
+        getOvectorCount: libpcre2.cwrap('getOvectorCount', 'number', ['number']),
+        getOvectorPtr: libpcre2.cwrap('getOvectorPointer', 'number', ['number']),
+        getCaptureCount: libpcre2.cwrap('getCaptureCount', 'number', ['number']),
+        getMatchNameCount: libpcre2.cwrap('getMatchNameCount', 'number', ['number']),
+        getMatchNameTableEntrySize: libpcre2.cwrap('getMatchNameTableEntrySize', 'number', ['number']),
+        getMatchNameTable: libpcre2.cwrap('getMatchNameTable', 'number', ['number']),
+      })
+  
+      initialized = true
+    });
+  }
 
-    Object.assign(cfunc, {
-      malloc(bytes) { return libpcre2._malloc(bytes) },
-      free(ptr) { return libpcre2._free(ptr) },
-      version: libpcre2.cwrap('version', 'number', ['number']),
-      compile: libpcre2.cwrap('compile', 'number', ['array', 'number', 'string']),
-      destroyCode: libpcre2.cwrap('destroyCode', null, ['number']),
-      lastErrorMessage: libpcre2.cwrap('lastErrorMessage', 'number', ['number', 'number']),
-      lastErrorOffset: libpcre2.cwrap('lastErrorOffset', 'number'),
-      match: libpcre2.cwrap('match', 'number', ['number', 'array', 'number', 'number']),
-      substitute: libpcre2.cwrap('substitute', 'number', ['number', 'array', 'number', 'number', 'number', 'number', 'array', 'number', 'number', 'number']),
-      createMatchData: libpcre2.cwrap('createMatchData', 'number', ['number']),
-      destroyMatchData: libpcre2.cwrap('destroyMatchData', null, ['number']),
-      getOvectorCount: libpcre2.cwrap('getOvectorCount', 'number', ['number']),
-      getOvectorPtr: libpcre2.cwrap('getOvectorPointer', 'number', ['number']),
-      getCaptureCount: libpcre2.cwrap('getCaptureCount', 'number', ['number']),
-      getMatchNameCount: libpcre2.cwrap('getMatchNameCount', 'number', ['number']),
-      getMatchNameTableEntrySize: libpcre2.cwrap('getMatchNameTableEntrySize', 'number', ['number']),
-      getMatchNameTable: libpcre2.cwrap('getMatchNameTable', 'number', ['number']),
-    })
-
-    initialized = true
+  static withInitialized(fn) {
+    return new Promise((resolve) => {
+      if (!initialized) {
+        return PCRE.init().then(() => {
+          return resolve(fn());
+        });
+      }
+      return resolve(fn());
+    });
   }
 
   static version() {
-    assert(initialized)
-    const len = cfunc.version(0)
-    const ptr = allocateStringBuffer(len)
-    cfunc.version(ptr)
-    return copyAndFreeStringBuffer(ptr, len)
+    PCRE.withInitialized(() => {
+      const len = cfunc.version(0)
+      const ptr = allocateStringBuffer(len)
+      cfunc.version(ptr)
+      return copyAndFreeStringBuffer(ptr, len)
+    });
   }
 
   constructor(pattern, flags = '') {
@@ -146,7 +159,7 @@ export default class PCRE {
     const matches = convertOVector(subject, vectorPtr, matchCount)
 
     // merge in nametable entries
-    const results = { ...matches }
+    const results = Object.assign({}, matches);
     for (let i in matches) {
       if (i in this[nametableSym]) {
         const name = this[nametableSym][i]
@@ -409,3 +422,10 @@ function getPCRE2Error(result) {
     return "UNKNOWN"
   }
 }
+
+
+
+
+var Module = typeof Module !== "undefined" ? Module : {};
+
+Module["PCRE"] = PCRE;
