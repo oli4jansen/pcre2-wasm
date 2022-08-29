@@ -30,8 +30,7 @@ dist/libpcre2.js: src/lib/libpcre2.c | deps dist
 		--pre-js /src/lib/pre.js \
 		--post-js /src/lib/PCRE.js \
 		-s EXPORTED_FUNCTIONS='["_malloc", "_free"]' \
-		-s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap", "ccall", "getValue"]' \
-		-s BINARYEN=1 \
+		-s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap"]' \
 		-s FILESYSTEM=0 \
 		-s ASSERTIONS=2 \
 		-s MODULARIZE=1 \
